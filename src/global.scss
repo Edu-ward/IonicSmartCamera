@@ -1,0 +1,73 @@
+/*
+ * App Global CSS
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ */
+@import '@ionic/angular/css/palettes/dark.system.css';
+
+/* ─── Override dark mode opaque backgrounds ──────────────────────────────────
+   dark.system.css sets :root.md { --ion-background-color: #121212; }
+   which blocks the camera preview on Android. We force transparent here.
+─────────────────────────────────────────────────────────────────────────────── */
+:root,
+:root.md,
+:root.ios {
+  --ion-background-color: transparent !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root,
+  :root.md,
+  :root.ios {
+    --ion-background-color: transparent !important;
+  }
+}
+
+/* ─── Camera transparency stack ────────────────────────────────────────────────
+   When toBack:true is used, the native camera renders BEHIND the WebView.
+   Every layer from html → body → app-root → ion-app → ion-router-outlet → .ion-page
+   → ion-content (host, ::part(background), and ::part(scroll)) must be transparent
+   so the camera shows through.
+─────────────────────────────────────────────────────────────────────────────── */
+html,
+body,
+app-root,
+ion-app,
+ion-router-outlet,
+.ion-page {
+  background: transparent !important;
+  --background: transparent !important;
+}
+
+/* ion-content styling for camera view */
+ion-content.camera-content {
+  --background: transparent !important;
+  --ion-background-color: transparent !important;
+  background: transparent !important;
+}
+
+ion-content.camera-content::part(background) {
+  background: transparent !important;
+}
+
+ion-content.camera-content::part(scroll) {
+  background: transparent !important;
+}

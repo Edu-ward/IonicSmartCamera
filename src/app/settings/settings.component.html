@@ -1,0 +1,199 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" strong="true">Save</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="settings-content">
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>
+        <ion-icon name="camera-outline"></ion-icon>
+        Camera
+      </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon name="camera-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>Default Camera</ion-label>
+      <ion-select [(ngModel)]="settings.defaultCamera" interface="popover" slot="end">
+        <ion-select-option value="rear">Rear</ion-select-option>
+        <ion-select-option value="front">Front (Selfie)</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="image-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>
+        <h3>Photo Quality</h3>
+        <p>{{ settings.photoQuality }}% — {{ qualityLabel }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-range [(ngModel)]="settings.photoQuality" min="30" max="100" step="5" color="primary"
+        aria-label="Photo quality">
+        <ion-label slot="start">30%</ion-label>
+        <ion-label slot="end">100%</ion-label>
+      </ion-range>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="image-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>Save to Device Gallery</ion-label>
+      <ion-toggle [(ngModel)]="settings.saveToGallery" slot="end" color="primary"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="grid-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>Show Grid on Start</ion-label>
+      <ion-toggle [(ngModel)]="settings.showGridOnStart" slot="end" color="primary"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="contrast-outline" slot="start" color="primary"></ion-icon>
+      <ion-label>Keep Screen On</ion-label>
+      <ion-toggle [(ngModel)]="settings.keepScreenOn" slot="end" color="primary"></ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>
+        <ion-icon name="location-outline"></ion-icon>
+        GPS &amp; Location
+      </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon name="location-outline" slot="start" color="success"></ion-icon>
+      <ion-label>
+        <h3>High-Accuracy GPS</h3>
+        <p>Uses more battery but is more precise</p>
+      </ion-label>
+      <ion-toggle [(ngModel)]="settings.highAccuracyGps" slot="end" color="success"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="time-outline" slot="start" color="success"></ion-icon>
+      <ion-label>
+        <h3>GPS Timeout</h3>
+        <p>{{ settings.gpsTimeout }} seconds before fallback</p>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="full">
+      <ion-range [(ngModel)]="settings.gpsTimeout" min="3" max="30" step="1" color="success" aria-label="GPS timeout">
+        <ion-label slot="start">3s</ion-label>
+        <ion-label slot="end">30s</ion-label>
+      </ion-range>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="location-outline" slot="start" color="success"></ion-icon>
+      <ion-label>Coordinate Format</ion-label>
+      <ion-select [(ngModel)]="settings.coordinateFormat" interface="popover" slot="end">
+        <ion-select-option value="dms">DMS (°′″)</ion-select-option>
+        <ion-select-option value="decimal">Decimal Degrees</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>
+        <ion-icon name="map-outline"></ion-icon>
+        Satellite Map Overlay
+      </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon name="map-outline" slot="start" color="warning"></ion-icon>
+      <ion-label>
+        <h3>Show Map Overlay</h3>
+        <p>Embed satellite thumbnail on photo</p>
+      </ion-label>
+      <ion-toggle [(ngModel)]="settings.showMapOverlay" slot="end" color="warning"></ion-toggle>
+    </ion-item>
+
+    <ion-item [disabled]="!settings.showMapOverlay">
+      <ion-icon name="map-outline" slot="start" color="warning"></ion-icon>
+      <ion-label>
+        <h3>Map Zoom Level</h3>
+        <p>{{ zoomLabel }}</p>
+      </ion-label>
+    </ion-item>
+    <ion-item lines="full" [disabled]="!settings.showMapOverlay">
+      <ion-range [(ngModel)]="settings.mapZoomOffset" min="1" max="10" step="1" color="warning" aria-label="Map zoom">
+        <ion-label slot="start">Street</ion-label>
+        <ion-label slot="end">Region</ion-label>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>
+        <ion-icon name="text-outline"></ion-icon>
+        Watermark
+      </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon name="location-outline" slot="start" color="tertiary"></ion-icon>
+      <ion-label>Show Coordinates</ion-label>
+      <ion-toggle [(ngModel)]="settings.showCoordinates" slot="end" color="tertiary"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="time-outline" slot="start" color="tertiary"></ion-icon>
+      <ion-label>Show Timestamp</ion-label>
+      <ion-toggle [(ngModel)]="settings.showTimestamp" slot="end" color="tertiary"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="location-outline" slot="start" color="tertiary"></ion-icon>
+      <ion-label>Show Address</ion-label>
+      <ion-toggle [(ngModel)]="settings.showAddress" slot="end" color="tertiary"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="text-outline" slot="start" color="tertiary"></ion-icon>
+      <ion-label>Font Size</ion-label>
+      <ion-select [(ngModel)]="settings.watermarkFontSize" interface="popover" slot="end">
+        <ion-select-option value="small">Small</ion-select-option>
+        <ion-select-option value="medium">Medium</ion-select-option>
+        <ion-select-option value="large">Large</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>
+        <ion-icon name="information-circle-outline"></ion-icon>
+        About
+      </ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-icon name="information-circle-outline" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <h3>SmartCam</h3>
+        <p>v1.0.0 — Geo-tagging Camera</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item button (click)="resetDefaults()" detail="false">
+      <ion-icon name="refresh-outline" slot="start" color="danger"></ion-icon>
+      <ion-label color="danger">Reset All Settings</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="bottom-spacer"></div>
+</ion-content>

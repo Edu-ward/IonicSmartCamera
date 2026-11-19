@@ -1,0 +1,183 @@
+@if (!viewingGallery) {
+
+<ion-content [fullscreen]="true" class="camera-content">
+  <div id="camera-preview" class="camera-preview-bg"></div>
+
+  @if (shutterFlashing) {
+  <div class="shutter-flash"></div>
+  }
+
+  @if (toastMessage) {
+  <div class="modern-toast" [class]="toastType" [class.landscape]="isLandscape">
+    <div class="toast-content">
+      @if (toastType === 'success') {
+      <ion-icon name="checkmark-circle" class="toast-icon success"></ion-icon>
+      }
+      @if (toastType === 'error') {
+      <ion-icon name="alert-circle" class="toast-icon error"></ion-icon>
+      }
+      <span class="toast-text">{{ toastMessage }}</span>
+    </div>
+  </div>
+  }
+
+  @if (isGridVisible) {
+  <div class="grid-overlay" [class.landscape]="isLandscape">
+    <div class="grid-line-h"></div>
+    <div class="grid-line-h"></div>
+    <div class="grid-line-v"></div>
+    <div class="grid-line-v"></div>
+  </div>
+  }
+
+  <div class="orientation-pill" [class.landscape]="isLandscape">
+    <ion-icon [name]="isLandscape ? 'phone-landscape-outline' : 'phone-portrait-outline'"></ion-icon>
+    <span>{{ isLandscape ? 'Landscape' : 'Portrait' }}</span>
+  </div>
+
+  @if (!isLandscape) {
+  <div class="top-bar portrait">
+    <div class="top-bar-title">
+      <span class="app-name">SmartCam</span>
+      @if (isFrontCamera) {
+      <span class="cam-badge">FRONT</span>
+      }
+    </div>
+    <div class="top-actions">
+      <button class="ctrl-btn" (click)="toggleFlash()" [class.active]="isFlashOn" [disabled]="isFrontCamera">
+        <ion-icon [name]="isFlashOn ? 'flash' : 'flash-outline'"></ion-icon>
+      </button>
+      <button class="ctrl-btn" (click)="toggleGrid()" [class.active]="isGridVisible">
+        <ion-icon name="grid-outline"></ion-icon>
+      </button>
+      <button class="ctrl-btn" (click)="openSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-bar portrait">
+    <button class="side-btn gallery-btn" (click)="openGallery()">
+      @if (allGalleryPhotos.length > 0) {
+      <img [src]="allGalleryPhotos[0]" class="gallery-thumb" alt="Last photo" />
+      } @else {
+      <ion-icon name="images-outline"></ion-icon>
+      }
+    </button>
+
+    <button class="capture-btn" (click)="captureImage()" [class.capturing]="isCapturing">
+      <div class="capture-ring">
+        <div class="capture-inner"></div>
+      </div>
+    </button>
+
+    <button class="side-btn" (click)="flipCamera()">
+      <ion-icon name="sync-outline"></ion-icon>
+    </button>
+  </div>
+  }
+
+  @if (isLandscape) {
+  <div class="side-bar left">
+    <div class="app-name-vertical">SmartCam</div>
+    @if (isFrontCamera) {
+    <span class="cam-badge">FRONT</span>
+    }
+    <button class="ctrl-btn gallery-btn" (click)="openGallery()">
+      @if (allGalleryPhotos.length > 0) {
+      <img [src]="allGalleryPhotos[0]" class="gallery-thumb" alt="Last photo" />
+      } @else {
+      <ion-icon name="images-outline"></ion-icon>
+      }
+    </button>
+  </div>
+
+  <div class="side-bar right">
+    <button class="ctrl-btn" (click)="toggleFlash()" [class.active]="isFlashOn" [disabled]="isFrontCamera">
+      <ion-icon [name]="isFlashOn ? 'flash' : 'flash-outline'"></ion-icon>
+    </button>
+    <button class="ctrl-btn" (click)="toggleGrid()" [class.active]="isGridVisible">
+      <ion-icon name="grid-outline"></ion-icon>
+    </button>
+    <button class="ctrl-btn" (click)="flipCamera()">
+      <ion-icon name="sync-outline"></ion-icon>
+    </button>
+
+    <button class="capture-btn landscape" (click)="captureImage()" [class.capturing]="isCapturing">
+      <div class="capture-ring">
+        <div class="capture-inner"></div>
+      </div>
+    </button>
+
+    <button class="ctrl-btn" (click)="openSettings()">
+      <ion-icon name="settings-outline"></ion-icon>
+    </button>
+  </div>
+  }
+
+</ion-content>
+}
+
+@if (viewingGallery) {
+
+<ion-header>
+  <ion-toolbar class="gallery-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="closeGallery()" fill="clear">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Gallery</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="gallery-content">
+  @if (allGalleryPhotos.length === 0) {
+  <div class="empty-gallery">
+    <ion-icon name="images-outline"></ion-icon>
+    <p>No geotagged photos yet.</p>
+    <span>Capture your first photo from the camera view.</span>
+  </div>
+  } @else {
+  <div class="gallery-grid" [class.landscape]="isLandscape">
+    @for (photo of allGalleryPhotos; track photo; let i = $index) {
+    <div class="gallery-item" (click)="viewPhotoDetail(i)">
+      <img [src]="photo" alt="Geotagged Photo" loading="lazy" />
+    </div>
+    }
+  </div>
+  }
+
+  @if (selectedGalleryPhotoIndex !== null && allGalleryPhotos.length > 0) {
+  <div class="lightbox" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()"
+    (click)="closePhotoDetail()">
+
+    <div class="lightbox-top-bar" (click)="$event.stopPropagation()">
+      <div class="lightbox-counter">
+        {{ selectedGalleryPhotoIndex + 1 }} / {{ allGalleryPhotos.length }}
+      </div>
+      <button class="lightbox-close" (click)="closePhotoDetail()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    @if (selectedGalleryPhotoIndex > 0) {
+    <button class="lightbox-nav prev" (click)="prevPhoto($event)">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </button>
+    }
+
+    <div class="lightbox-img-wrapper" (click)="$event.stopPropagation()">
+      <img [src]="allGalleryPhotos[selectedGalleryPhotoIndex]" alt="Enlarged Photo"
+        [style.transform]="lightboxTransform" [style.transition]="lightboxTransition" />
+    </div>
+
+    @if (selectedGalleryPhotoIndex < allGalleryPhotos.length - 1) { <button class="lightbox-nav next"
+      (click)="nextPhoto($event)">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+      }
+  </div>
+  }
+</ion-content>
+}
